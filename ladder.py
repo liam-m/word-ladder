@@ -4,6 +4,7 @@
 """
 import sys
 import heapq
+from collections import defaultdict
 
 DICTIONARY = "dict.txt"
 words_cache = None
@@ -11,14 +12,12 @@ words_cache = None
 
 class WordGraph(object):
     def __init__(self, words, size):
-        self.word_patterns = {}
+        self.word_patterns = defaultdict(list)
         self.size = size
 
         for word in words:
             if len(word) == size:
                 for p in self.patterns(word):
-                    if p not in self.word_patterns:
-                        self.word_patterns[p] = []
                     self.word_patterns[p].append(word)
 
     def patterns(self, word):
@@ -28,11 +27,10 @@ class WordGraph(object):
         words = []
         for p in self.patterns(word):
             candidates = self.word_patterns.get(p)
-            if candidates is None:
-                continue
-            for cand in candidates:
-                if cand not in visited:
-                    words.append(cand)
+            if candidates is not None:
+                for cand in candidates:
+                    if cand not in visited:
+                        words.append(cand)
         return words
 
     def min_path(self, word1, word2):
@@ -65,17 +63,16 @@ def hamming(word1, word2):
 def min_ladder(word1, word2, words=None):
     global words_cache
 
+    if len(word1) != len(word2):
+        raise Exception("Words must be the same length.")
+
+    if words_cache is None:
+        words_cache = open(DICTIONARY, 'r').read().split("\n")
     if words is None:
         words = words_cache
-    if words is None:
-        words = [word.strip() for word in open(DICTIONARY).readlines()]
-        words_cache = words
 
     word1 = word1.lower()
     word2 = word2.lower()
-
-    if len(word1) != len(word2):
-        raise Exception("Words must be the same length.")
 
     if word2 not in words:
         print "Warning: %s is not in dictionary." % word2
