@@ -15,20 +15,14 @@ class WordGraph(object):
         self.size = size
 
         for word in words:
-            if len(word) != size:
-                continue
-            for p in self.patterns(word):
-                if p not in self.word_patterns:
-                    self.word_patterns[p] = []
-                self.word_patterns[p].append(word)
+            if len(word) == size:
+                for p in self.patterns(word):
+                    if p not in self.word_patterns:
+                        self.word_patterns[p] = []
+                    self.word_patterns[p].append(word)
 
     def patterns(self, word):
-        p = []
-        for i in range(len(word)):
-            letters = list(word)
-            letters[i] = '?'
-            p.append(''.join(letters))
-        return p
+        return [word[:i]+'?'+word[i+1:] for i in range(len(word))]
 
     def unvisited(self, word, visited):
         words = []
