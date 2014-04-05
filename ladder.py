@@ -65,11 +65,7 @@ def hamming(word1, word2):
     >>> hamming('geek', 'wire')
     4
     """
-    c = 0
-    for i in range(len(word1)):
-        if word1[i] != word2[i]:
-            c += 1
-    return c
+    return sum(1 for a, b in zip(word1, word2) if a != b)
 
 
 def min_ladder(word1, word2, words=None):
